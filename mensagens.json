@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "usuario": "Digo",
+    "texto": "Ola!",
+    "dataHora": "10/12/2024, 19:01:07"
+  },
+  {
+    "usuario": "Marcolas",
+    "texto": "Como vai!",
+    "dataHora": "10/12/2024, 19:01:11"
+  }
+]

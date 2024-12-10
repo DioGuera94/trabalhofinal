@@ -55,8 +55,11 @@ app.post('/login', (req, res) => {
     } else {
         res.send(`
             <html>
-                <head><title>Login Falhou</title></head>
-                <body>
+                <head>
+                    <title>Login Falhou</title>
+                    <link rel="stylesheet" href="/style.css">
+                </head>
+                <body class="dark-mode">
                     <h2>Usuário ou senha inválidos</h2>
                     <a href="/login.html">Tente novamente</a>
                 </body>
@@ -75,8 +78,9 @@ app.get('/menu', (req, res) => {
             <head>
                 <title>Menu</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link rel="stylesheet" href="/style.css">
             </head>
-            <body>
+            <body class="dark-mode">
                 <div class="container">
                     <h1>Menu</h1>
                     <a href="/cadastrousuario.html" class="btn btn-primary">Cadastro de Usuários</a>
@@ -109,8 +113,9 @@ app.get('/cadastrousuario.html', (req, res) => {
             <head>
                 <title>Cadastro de Usuários</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link rel="stylesheet" href="/style.css">
             </head>
-            <body>
+            <body class="dark-mode">
                 <div class="container">
                     <h1>Cadastro de Usuários</h1>
                     <form action="/cadastrarusuario" method="POST">
@@ -155,8 +160,9 @@ app.post('/cadastrarusuario', (req, res) => {
             <head>
                 <title>Usuários Cadastrados</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link rel="stylesheet" href="/style.css">
             </head>
-            <body>
+            <body class="dark-mode">
                 <div class="container mt-5">
                     <h1>Usuários Cadastrados</h1>
                     <ul>
@@ -183,7 +189,7 @@ app.get('/batepapo', (req, res) => {
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
                 <link rel="stylesheet" href="/style.css">
             </head>
-            <body>
+            <body class="dark-mode">
                 <div class="container">
                     <h1>Bate-papo</h1>
                     <div class="chat-box">

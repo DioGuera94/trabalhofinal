@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "nome": "Diogo da Silva Floriano",
+    "dataNascimento": "2004-03-19",
+    "apelido": "Digo"
+  },
+  {
+    "nome": "marcos",
+    "dataNascimento": "2645-05-18",
+    "apelido": "Marcolas"
+  }
+]
