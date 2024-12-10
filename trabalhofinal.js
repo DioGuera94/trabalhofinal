@@ -1,30 +1,43 @@
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
 const app = express();
+
+// Configuração de sessão
+app.use(session({
+    secret: 'secretKey', // Defina uma chave secreta segura
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Alterar para true se for usar HTTPS
+}));
 
 app.use(express.urlencoded({ extended: true }));
 
 const porta = 3000;
 const host = '0.0.0.0';
 
+// Dados armazenados na sessão
 let usuarios = [];
 let mensagens = [];
 
 // Serve arquivos estáticos da pasta 'public'
-app.use(express.static(path.join(__dirname, 'pages', 'public')));  // Corrigido o caminho
+app.use(express.static(path.join(__dirname, 'pages', 'public')));
 
+// Página Inicial (Login)
 app.get('/', (req, res) => {
     res.redirect('/login.html');
 });
 
 app.get('/login.html', (req, res) => {
-    // Corrigido o caminho para o arquivo de login.html
-    res.sendFile(path.join(__dirname, 'pages', 'public', 'login.html'));  // Corrigido o caminho
+    res.sendFile(path.join(__dirname, 'pages', 'public', 'login.html'));
 });
 
 app.post('/login', (req, res) => {
     const { usuario, senha } = req.body;
     if (usuario === 'admin' && senha === '123') {
+        req.session.usuario = usuario; // Salvar o usuário na sessão
+        req.session.usuarios = usuarios; // Salvar os usuários na sessão
+        req.session.mensagens = mensagens; // Salvar o histórico de mensagens na sessão
         res.redirect('/menu');
     } else {
         res.send(`
@@ -39,38 +52,49 @@ app.post('/login', (req, res) => {
     }
 });
 
+// Página Menu
 app.get('/menu', (req, res) => {
+    if (!req.session.usuario) { // Verificar se o usuário está autenticado
+        return res.redirect('/login.html');
+    }
     res.send(`
         <html>
             <head>
                 <title>Menu</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    .container { margin-top: 50px; }
-                </style>
             </head>
             <body>
                 <div class="container">
                     <h1>Menu</h1>
                     <a href="/cadastrousuario.html" class="btn btn-primary">Cadastro de Usuários</a>
                     <a href="/batepapo" class="btn btn-secondary">Bate-papo</a>
+                    <a href="/logout" class="btn btn-danger">Sair</a>
                 </div>
             </body>
         </html>
     `);
 });
 
+// Logout
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.send('Erro ao sair');
+        }
+        res.redirect('/login.html');
+    });
+});
+
+// Cadastro de Usuários
 app.get('/cadastrousuario.html', (req, res) => {
+    if (!req.session.usuario) {
+        return res.redirect('/login.html');
+    }
     res.send(`
         <html>
             <head>
                 <title>Cadastro de Usuários</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    .container { margin-top: 50px; }
-                </style>
             </head>
             <body>
                 <div class="container">
@@ -97,72 +121,24 @@ app.get('/cadastrousuario.html', (req, res) => {
     `);
 });
 
-app.post('/cadastrarusuario', (req, res) => {
-    const { nome, dataNascimento, apelido } = req.body;
-    if (!nome || !dataNascimento || !apelido) {
-        res.send("Todos os campos são obrigatórios.");
-        return;
-    }
-    usuarios.push({ nome, dataNascimento, apelido });
-    res.send(`
-        <html>
-            <head>
-                <title>Usuários Cadastrados</title>
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            </head>
-            <body>
-                <div class="container mt-5">
-                    <h1>Usuários cadastrados</h1>
-                    <ul>
-                        ${usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
-                    </ul>
-                    <a href="/cadastrousuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
-                    <a href="/menu" class="btn btn-secondary">Voltar ao menu</a>
-                </div>
-            </body>
-        </html>
-    `);
-});
-
+// Resto das rotas para o bate-papo, etc. com os dados da sessão
 app.get('/batepapo', (req, res) => {
+    if (!req.session.usuario) {
+        return res.redirect('/login.html');
+    }
+    let mensagensSessao = req.session.mensagens || [];
+
     res.send(`
         <html>
             <head>
                 <title>Bate-papo</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    .container { margin-top: 50px; }
-                    .mensagem {
-                        margin-bottom: 15px;
-                        padding: 10px;
-                        border: 1px solid #ddd;
-                        border-radius: 10px;
-                        max-width: 60%;
-                    }
-                    .mensagem.usuario {
-                        background-color: #f0f8ff;
-                        align-self: flex-start;
-                    }
-                    .mensagem.outro {
-                        background-color: #e6ffe6;
-                        align-self: flex-end;
-                    }
-                    .chat-box {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                    }
-                    .formulario {
-                        margin-top: 30px;
-                    }
-                </style>
             </head>
             <body>
                 <div class="container">
                     <h1>Bate-papo</h1>
                     <div class="chat-box">
-                        ${mensagens.map(m => `
+                        ${mensagensSessao.map(m => `
                             <div class="mensagem ${m.usuario === "Você" ? "usuario" : "outro"}">
                                 <strong>${m.usuario}:</strong> ${m.texto}
                                 <div style="font-size: 0.8em; color: #555;">${m.dataHora}</div>
@@ -173,7 +149,7 @@ app.get('/batepapo', (req, res) => {
                         <div class="mb-3">
                             <label for="usuario" class="form-label">Usuário</label>
                             <select id="usuario" name="usuario" class="form-select" required>
-                                ${usuarios.map(u => `<option value="${u.apelido}">${u.apelido}</option>`).join('')}
+                                ${req.session.usuarios.map(u => `<option value="${u.apelido}">${u.apelido}</option>`).join('')}
                             </select>
                         </div>
                         <div class="mb-3">
@@ -195,11 +171,12 @@ app.post('/postarmensagem', (req, res) => {
         res.send("Usuário e mensagem são obrigatórios.");
         return;
     }
-    mensagens.push({
+    const mensagem = {
         usuario,
         texto,
         dataHora: new Date().toLocaleString('pt-BR'),
-    });
+    };
+    req.session.mensagens.push(mensagem); // Adiciona a mensagem à sessão
     res.redirect('/batepapo');
 });
 
