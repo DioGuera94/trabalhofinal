@@ -34,6 +34,7 @@ app.post('/login', (req, res) => {
         req.session.usuario = usuario; // Salvar o usuário na sessão
         req.session.usuarios = []; // Inicializar lista de usuários na sessão
         req.session.mensagens = []; // Inicializar lista de mensagens na sessão
+        req.session.ultimoLogin = new Date().toLocaleString('pt-BR'); // Salvar data e hora do login
         res.redirect('/menu');
     } else {
         res.send(`
@@ -66,6 +67,7 @@ app.get('/menu', (req, res) => {
             <body class="dark-mode">
                 <div class="container">
                     <h1>Menu</h1>
+                    <p>Último login: ${req.session.ultimoLogin}</p>
                     <a href="/cadastrousuario.html" class="btn btn-primary">Cadastro de Usuários</a>
                     <a href="/batepapo" class="btn btn-secondary">Bate-papo</a>
                     <a href="/logout" class="btn btn-danger">Sair</a>
