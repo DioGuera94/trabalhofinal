@@ -11,7 +11,7 @@ let usuarios = [];
 let mensagens = [];
 
 // Serve arquivos estáticos da pasta 'public'
-app.use(express.static(path.join(__dirname, 'trabalhofinal', 'pages', 'public')));
+app.use(express.static(path.join(__dirname, 'pages', 'public')));  // Corrigido o caminho
 
 app.get('/', (req, res) => {
     res.redirect('/login.html');
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 app.get('/login.html', (req, res) => {
     // Corrigido o caminho para o arquivo de login.html
-    res.sendFile(path.join(__dirname, 'trabalhofinal', 'pages', 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, 'pages', 'public', 'login.html'));  // Corrigido o caminho
 });
 
 app.post('/login', (req, res) => {
