@@ -10,14 +10,14 @@ const host = '0.0.0.0';
 let usuarios = [];
 let mensagens = [];
 
-app.use(express.static(path.join(__dirname, 'trabalhofinal/pages/public')));
+app.use(express.static(path.join(__dirname, 'trabalhofinal', 'pages', 'public')));
 
 app.get('/', (req, res) => {
     res.redirect('/login.html');
 });
 
 app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'trabalhofinal/pages/public/login.html'));
+    res.sendFile(path.join(__dirname, 'trabalhofinal', 'pages', 'public', 'login.html'));
 });
 
 app.post('/login', (req, res) => {
