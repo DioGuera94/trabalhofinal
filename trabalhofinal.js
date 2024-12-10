@@ -36,8 +36,8 @@ app.post('/login', (req, res) => {
     const { usuario, senha } = req.body;
     if (usuario === 'admin' && senha === '123') {
         req.session.usuario = usuario; // Salvar o usuário na sessão
-        req.session.usuarios = usuarios; // Salvar os usuários na sessão
-        req.session.mensagens = mensagens; // Salvar o histórico de mensagens na sessão
+        req.session.usuarios = req.session.usuarios || []; // Inicializa a lista de usuários se não existir
+        req.session.mensagens = req.session.mensagens || []; // Inicializa o histórico de mensagens se não existir
         res.redirect('/menu');
     } else {
         res.send(`
@@ -50,6 +50,19 @@ app.post('/login', (req, res) => {
             </html>
         `);
     }
+});
+
+app.get('/verificar-sessao', (req, res) => {
+    res.send(`
+        <html>
+            <head><title>Verificar Sessão</title></head>
+            <body>
+                <h1>Dados da Sessão</h1>
+                <pre>${JSON.stringify(req.session, null, 2)}</pre>
+                <a href="/menu">Voltar</a>
+            </body>
+        </html>
+    `);
 });
 
 // Página Menu
@@ -86,35 +99,34 @@ app.get('/logout', (req, res) => {
 });
 
 // Página para Cadastro de Usuários (GET)
-app.get('/cadastrousuario.html', (req, res) => {
+app.post('/cadastrarusuario', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
     }
+
+    const { nome, dataNascimento, apelido } = req.body;
+    if (!nome || !dataNascimento || !apelido) {
+        return res.send("Todos os campos são obrigatórios.");
+    }
+
+    // Armazenando o usuário na sessão
+    req.session.usuarios.push({ nome, dataNascimento, apelido });
+
+    // Exibindo a lista de usuários cadastrados
     res.send(`
         <html>
             <head>
-                <title>Cadastro de Usuários</title>
+                <title>Usuários Cadastrados</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             </head>
             <body>
-                <div class="container">
-                    <h1>Cadastro de Usuários</h1>
-                    <form action="/cadastrarusuario" method="POST">
-                        <div class="mb-3">
-                            <label for="nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="nome" name="nome" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="dataNascimento" class="form-label">Data de Nascimento</label>
-                            <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="apelido" class="form-label">Apelido</label>
-                            <input type="text" class="form-control" id="apelido" name="apelido" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Cadastrar</button>
-                    </form>
-                    <a href="/menu" class="btn btn-secondary mt-3">Voltar</a>
+                <div class="container mt-5">
+                    <h1>Usuários cadastrados</h1>
+                    <ul>
+                        ${req.session.usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
+                    </ul>
+                    <a href="/cadastrousuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
+                    <a href="/menu" class="btn btn-secondary">Voltar ao menu</a>
                 </div>
             </body>
         </html>
