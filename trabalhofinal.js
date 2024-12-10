@@ -52,19 +52,6 @@ app.post('/login', (req, res) => {
     }
 });
 
-app.get('/verificar-sessao', (req, res) => {
-    res.send(`
-        <html>
-            <head><title>Verificar Sessão</title></head>
-            <body>
-                <h1>Dados da Sessão</h1>
-                <pre>${JSON.stringify(req.session, null, 2)}</pre>
-                <a href="/menu">Voltar</a>
-            </body>
-        </html>
-    `);
-});
-
 // Página Menu
 app.get('/menu', (req, res) => {
     if (!req.session.usuario) { // Verificar se o usuário está autenticado
@@ -99,6 +86,44 @@ app.get('/logout', (req, res) => {
 });
 
 // Página para Cadastro de Usuários (GET)
+app.get('/cadastrousuario.html', (req, res) => {
+    if (!req.session.usuario) { // Verifica se o usuário está autenticado
+        return res.redirect('/login.html');
+    }
+
+    // Formulário de Cadastro de Usuário
+    res.send(`
+        <html>
+            <head>
+                <title>Cadastro de Usuários</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Cadastro de Usuários</h1>
+                    <form action="/cadastrarusuario" method="POST">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="apelido" class="form-label">Apelido</label>
+                            <input type="text" class="form-control" id="apelido" name="apelido" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                    </form>
+                    <a href="/menu" class="btn btn-secondary mt-3">Voltar ao Menu</a>
+                </div>
+            </body>
+        </html>
+    `);
+});
+
+// Rota para cadastrar usuário (POST)
 app.post('/cadastrarusuario', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
@@ -121,55 +146,19 @@ app.post('/cadastrarusuario', (req, res) => {
             </head>
             <body>
                 <div class="container mt-5">
-                    <h1>Usuários cadastrados</h1>
+                    <h1>Usuários Cadastrados</h1>
                     <ul>
                         ${req.session.usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
                     </ul>
                     <a href="/cadastrousuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
-                    <a href="/menu" class="btn btn-secondary">Voltar ao menu</a>
+                    <a href="/menu" class="btn btn-secondary">Voltar ao Menu</a>
                 </div>
             </body>
         </html>
     `);
 });
 
-// Rota para cadastro de usuário (POST)
-app.post('/cadastrarusuario', (req, res) => {
-    if (!req.session.usuario) {
-        return res.redirect('/login.html');
-    }
-
-    const { nome, dataNascimento, apelido } = req.body;
-    if (!nome || !dataNascimento || !apelido) {
-        return res.send("Todos os campos são obrigatórios.");
-    }
-
-    // Armazenando o usuário na sessão
-    req.session.usuarios.push({ nome, dataNascimento, apelido });
-
-    // Exibindo a lista de usuários cadastrados
-    res.send(`
-        <html>
-            <head>
-                <title>Usuários Cadastrados</title>
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            </head>
-            <body>
-                <div class="container mt-5">
-                    <h1>Usuários cadastrados</h1>
-                    <ul>
-                        ${req.session.usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
-                    </ul>
-                    <a href="/cadastrousuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
-                    <a href="/menu" class="btn btn-secondary">Voltar ao menu</a>
-                </div>
-            </body>
-        </html>
-    `);
-});
-
-
-// Resto das rotas para o bate-papo, etc. com os dados da sessão
+// Rota para bate-papo
 app.get('/batepapo', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
