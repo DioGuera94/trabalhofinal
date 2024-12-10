@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  },
+  "name": "trabalhofinal",
+  "version": "1.0.0",
+  "description": "trabalho final programacao para internet",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DioGuera94/trabalhofinal.git"
+  },
+  "author": "Diogo da Silva Floriano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DioGuera94/trabalhofinal/issues"
+  },
+  "homepage": "https://github.com/DioGuera94/trabalhofinal#readme"
+}
