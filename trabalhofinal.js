@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -9,8 +10,31 @@ const host = '0.0.0.0';
 let usuarios = [];
 let mensagens = [];
 
+app.use(express.static(path.join(__dirname, 'trabalhofinal/pages/public')));
+
 app.get('/', (req, res) => {
-    res.redirect('/menu');
+    res.redirect('/login.html');
+});
+
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'trabalhofinal/pages/public/login.html'));
+});
+
+app.post('/login', (req, res) => {
+    const { usuario, senha } = req.body;
+    if (usuario === 'admin' && senha === '123') {
+        res.redirect('/menu');
+    } else {
+        res.send(`
+            <html>
+                <head><title>Login Falhou</title></head>
+                <body>
+                    <h2>Usuário ou senha inválidos</h2>
+                    <a href="/login.html">Tente novamente</a>
+                </body>
+            </html>
+        `);
+    }
 });
 
 app.get('/menu', (req, res) => {
@@ -27,7 +51,7 @@ app.get('/menu', (req, res) => {
             <body>
                 <div class="container">
                     <h1>Menu</h1>
-                    <a href="/cadastroUsuario.html" class="btn btn-primary">Cadastro de Usuários</a>
+                    <a href="/cadastrousuario.html" class="btn btn-primary">Cadastro de Usuários</a>
                     <a href="/batepapo" class="btn btn-secondary">Bate-papo</a>
                 </div>
             </body>
@@ -35,7 +59,7 @@ app.get('/menu', (req, res) => {
     `);
 });
 
-app.get('/cadastroUsuario.html', (req, res) => {
+app.get('/cadastrousuario.html', (req, res) => {
     res.send(`
         <html>
             <head>
@@ -49,7 +73,7 @@ app.get('/cadastroUsuario.html', (req, res) => {
             <body>
                 <div class="container">
                     <h1>Cadastro de Usuários</h1>
-                    <form action="/cadastrarUsuario" method="POST">
+                    <form action="/cadastrarusuario" method="POST">
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="nome" name="nome" required>
@@ -59,8 +83,8 @@ app.get('/cadastroUsuario.html', (req, res) => {
                             <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" required>
                         </div>
                         <div class="mb-3">
-                            <label for="nickname" class="form-label">Nickname</label>
-                            <input type="text" class="form-control" id="nickname" name="nickname" required>
+                            <label for="apelido" class="form-label">Apelido</label>
+                            <input type="text" class="form-control" id="apelido" name="apelido" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Cadastrar</button>
                     </form>
@@ -71,15 +95,13 @@ app.get('/cadastroUsuario.html', (req, res) => {
     `);
 });
 
-app.post('/cadastrarUsuario', (req, res) => {
-    const { nome, dataNascimento, nickname } = req.body;
-
-    if (!nome || !dataNascimento || !nickname) {
+app.post('/cadastrarusuario', (req, res) => {
+    const { nome, dataNascimento, apelido } = req.body;
+    if (!nome || !dataNascimento || !apelido) {
         res.send("Todos os campos são obrigatórios.");
         return;
     }
-
-    usuarios.push({ nome, dataNascimento, nickname });
+    usuarios.push({ nome, dataNascimento, apelido });
     res.send(`
         <html>
             <head>
@@ -90,9 +112,9 @@ app.post('/cadastrarUsuario', (req, res) => {
                 <div class="container mt-5">
                     <h1>Usuários cadastrados</h1>
                     <ul>
-                        ${usuarios.map(u => `<li>${u.nome} (${u.nickname})</li>`).join('')}
+                        ${usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
                     </ul>
-                    <a href="/cadastroUsuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
+                    <a href="/cadastrousuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
                     <a href="/menu" class="btn btn-secondary">Voltar ao menu</a>
                 </div>
             </body>
@@ -145,11 +167,11 @@ app.get('/batepapo', (req, res) => {
                             </div>
                         `).join('')}
                     </div>
-                    <form action="/postarMensagem" method="POST" class="formulario">
+                    <form action="/postarmensagem" method="POST" class="formulario">
                         <div class="mb-3">
                             <label for="usuario" class="form-label">Usuário</label>
                             <select id="usuario" name="usuario" class="form-select" required>
-                                ${usuarios.map(u => `<option value="${u.nickname}">${u.nickname}</option>`).join('')}
+                                ${usuarios.map(u => `<option value="${u.apelido}">${u.apelido}</option>`).join('')}
                             </select>
                         </div>
                         <div class="mb-3">
@@ -165,20 +187,17 @@ app.get('/batepapo', (req, res) => {
     `);
 });
 
-app.post('/postarMensagem', (req, res) => {
+app.post('/postarmensagem', (req, res) => {
     const { usuario, texto } = req.body;
-
     if (!usuario || !texto) {
         res.send("Usuário e mensagem são obrigatórios.");
         return;
     }
-
     mensagens.push({
         usuario,
         texto,
         dataHora: new Date().toLocaleString('pt-BR'),
     });
-
     res.redirect('/batepapo');
 });
 
