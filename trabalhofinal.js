@@ -3,12 +3,11 @@ const path = require('path');
 const session = require('express-session');
 const app = express();
 
-// Configuração de sessão
 app.use(session({
     secret: 'secretKey',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Altere para true se for usar HTTPS
+    cookie: { secure: false }
 }));
 
 app.use(express.urlencoded({ extended: true }));
@@ -16,10 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 const porta = 3000;
 const host = '0.0.0.0';
 
-// Serve arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, 'pages', 'public')));
 
-// Página Inicial (Login)
 app.get('/', (req, res) => {
     res.redirect('/login.html');
 });
@@ -31,9 +28,9 @@ app.get('/login.html', (req, res) => {
 app.post('/login', (req, res) => {
     const { usuario, senha } = req.body;
     if (usuario === 'admin' && senha === '123') {
-        req.session.usuario = usuario; // Salvar o usuário na sessão
-        req.session.usuarios = []; // Inicializar lista de usuários na sessão
-        req.session.mensagens = []; // Inicializar lista de mensagens na sessão
+        req.session.usuario = usuario;
+        req.session.usuarios = [];
+        req.session.mensagens = [];
         req.session.ultimoLogin = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' }).format(new Date())
         res.redirect('/menu');
     } else {
@@ -52,7 +49,6 @@ app.post('/login', (req, res) => {
     }
 });
 
-// Página Menu
 app.get('/menu', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
@@ -77,7 +73,6 @@ app.get('/menu', (req, res) => {
     `);
 });
 
-// Logout
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -87,7 +82,6 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Página para Cadastro de Usuários (GET)
 app.get('/cadastrousuario.html', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
@@ -125,7 +119,6 @@ app.get('/cadastrousuario.html', (req, res) => {
     `);
 });
 
-// Rota para cadastrar usuário (POST)
 app.post('/cadastrarusuario', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
@@ -137,7 +130,7 @@ app.post('/cadastrarusuario', (req, res) => {
     }
 
     const novoUsuario = { nome, dataNascimento, apelido };
-    req.session.usuarios.push(novoUsuario); // Salvar na sessão
+    req.session.usuarios.push(novoUsuario);
 
     res.send(`
         <html>
@@ -160,7 +153,6 @@ app.post('/cadastrarusuario', (req, res) => {
     `);
 });
 
-// Rota para bate-papo
 app.get('/batepapo', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
@@ -215,7 +207,7 @@ app.post('/postarmensagem', (req, res) => {
         texto,
         dataHora: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' }).format(new Date())
     };
-    req.session.mensagens.push(mensagem); // Salvar na sessão
+    req.session.mensagens.push(mensagem);
     res.redirect('/batepapo');
 });
 

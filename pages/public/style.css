@@ -1,33 +1,25 @@
-/* Paleta escura para o modo noturno */
 body.dark-mode {
     background-color: #121212;
     color: #e0e0e0;
     font-family: Arial, sans-serif;
 }
-
-/* Inputs e botões */
 input, select, textarea {
     background-color: #2c2c2c;
     color: #e0e0e0;
     border: 1px solid #444444;
 }
-
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: #66afe9;
 }
-
 button {
     background-color: #007bff;
     color: #e0e0e0;
     border: none;
 }
-
 button:hover {
     background-color: #0056b3;
 }
-
-/* Chat box */
 .chat-box {
     border: 1px solid #444;
     border-radius: 10px;
@@ -37,11 +29,9 @@ button:hover {
     margin-bottom: 20px;
     background-color: #1e1e1e;
 }
-
 .chat-box .mensagem:not(:last-child) {
     margin-bottom: 15px;
 }
-
 .mensagem {
     max-width: 60%;
     padding: 10px 15px;
@@ -51,7 +41,6 @@ button:hover {
     font-size: 0.9em;
     word-wrap: break-word;
 }
-
 .mensagem.usuario {
     background-color: #007bff;
     color: white;
@@ -59,7 +48,6 @@ button:hover {
     margin-right: 0;
     text-align: left;
 }
-
 .mensagem.outro {
     background-color: #f1f1f1;
     color: #333;
@@ -67,33 +55,25 @@ button:hover {
     margin-left: 0;
     text-align: left;
 }
-
 .mensagem strong {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
 }
-
 .mensagem div {
     font-size: 0.75em;
     color: #bbb;
     margin-top: 5px;
     text-align: right;
 }
-
-
-/* Links */
 a {
     color: #66afe9;
     text-decoration: none;
 }
-
 a:hover {
     color: #0056b3;
     text-decoration: underline;
 }
-
-/* Containers e campos */
 .container {
     padding: 20px;
     background-color: #1e1e1e;
