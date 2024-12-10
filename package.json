@@ -6,9 +6,9 @@
   "name": "trabalhofinal",
   "version": "1.0.0",
   "description": "trabalho final programacao para internet",
-  "main": "index.js",
+  "main": "trabalhofinal.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node trabalhofinal.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
