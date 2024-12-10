@@ -1,16 +1,7 @@
 const express = require('express');
-const session = require('express-session');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
-app.use(
-    session({
-        secret: 'chave-secreta',
-        resave: false,
-        saveUninitialized: true,
-        cookie: { maxAge: 30 * 60 * 1000 }, // Sessão válida por 30 minutos
-    })
-);
 
 const porta = 3000;
 const host = '0.0.0.0';
@@ -18,67 +9,11 @@ const host = '0.0.0.0';
 let usuarios = [];
 let mensagens = [];
 
-function verificarAutenticacao(req, res, next) {
-    if (req.session.autenticado) {
-        next();
-    } else {
-        res.redirect('/login');
-    }
-}
-
-app.get('/login', (req, res) => {
-    res.send(`
-        <html>
-            <head>
-                <title>Login</title>
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            </head>
-            <body>
-                <div class="container w-50 mt-5">
-                    <form action='/login' method='POST'>
-                        <div class="mb-3">
-                            <label for="usuario" class="form-label">Usuário</label>
-                            <input type="text" class="form-control" id="usuario" name="usuario" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="senha" class="form-label">Senha</label>
-                            <input type="password" class="form-control" id="senha" name="senha" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Entrar</button>
-                    </form>
-                </div>
-            </body>
-        </html>
-    `);
+app.get('/', (req, res) => {
+    res.redirect('/menu');
 });
 
-app.post('/login', (req, res) => {
-    const { usuario, senha } = req.body;
-
-    if (usuario === 'admin' && senha === '123') {
-        req.session.autenticado = true;
-        req.session.ultimoAcesso = new Date().toLocaleString('pt-BR');
-        res.redirect('/menu');
-    } else {
-        res.send(`
-            <div class="alert alert-danger" role="alert">
-                Usuário ou senha inválidos!
-            </div>
-            <a href="/login" class="btn btn-primary">Tentar Novamente</a>
-        `);
-    }
-});
-
-app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Erro ao destruir a sessão:', err);
-        }
-        res.redirect('/login');
-    });
-});
-
-app.get('/menu', verificarAutenticacao, (req, res) => {
+app.get('/menu', (req, res) => {
     res.send(`
         <html>
             <head>
@@ -88,17 +23,15 @@ app.get('/menu', verificarAutenticacao, (req, res) => {
             <body>
                 <div class="container mt-5">
                     <h1>Menu</h1>
-                    <p>Último acesso: ${req.session.ultimoAcesso}</p>
                     <a href="/cadastroUsuario.html" class="btn btn-primary">Cadastro de Usuários</a>
                     <a href="/batepapo" class="btn btn-secondary">Bate-papo</a>
-                    <a href="/logout" class="btn btn-danger">Sair</a>
                 </div>
             </body>
         </html>
     `);
 });
 
-app.get('/cadastroUsuario.html', verificarAutenticacao, (req, res) => {
+app.get('/cadastroUsuario.html', (req, res) => {
     res.send(`
         <html>
             <head>
@@ -130,7 +63,7 @@ app.get('/cadastroUsuario.html', verificarAutenticacao, (req, res) => {
     `);
 });
 
-app.post('/cadastrarUsuario', verificarAutenticacao, (req, res) => {
+app.post('/cadastrarUsuario', (req, res) => {
     const { nome, dataNascimento, nickname } = req.body;
 
     if (!nome || !dataNascimento || !nickname) {
@@ -149,7 +82,7 @@ app.post('/cadastrarUsuario', verificarAutenticacao, (req, res) => {
     `);
 });
 
-app.get('/batepapo', verificarAutenticacao, (req, res) => {
+app.get('/batepapo', (req, res) => {
     res.send(`
         <html>
             <head>
@@ -182,7 +115,7 @@ app.get('/batepapo', verificarAutenticacao, (req, res) => {
     `);
 });
 
-app.post('/postarMensagem', verificarAutenticacao, (req, res) => {
+app.post('/postarMensagem', (req, res) => {
     const { usuario, texto } = req.body;
 
     if (!usuario || !texto) {
