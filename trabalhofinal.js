@@ -34,7 +34,7 @@ app.post('/login', (req, res) => {
         req.session.usuario = usuario; // Salvar o usuário na sessão
         req.session.usuarios = []; // Inicializar lista de usuários na sessão
         req.session.mensagens = []; // Inicializar lista de mensagens na sessão
-        req.session.ultimoLogin = new Date().toLocaleString('pt-BR'); // Salvar data e hora do login
+        req.session.ultimoLogin = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' }).format(new Date())
         res.redirect('/menu');
     } else {
         res.send(`
@@ -213,7 +213,7 @@ app.post('/postarmensagem', (req, res) => {
     const mensagem = {
         usuario,
         texto,
-        dataHora: new Date().toLocaleString('pt-BR'),
+        dataHora: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' }).format(new Date())
     };
     req.session.mensagens.push(mensagem); // Salvar na sessão
     res.redirect('/batepapo');
