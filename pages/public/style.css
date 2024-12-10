@@ -29,26 +29,58 @@ button:hover {
 
 /* Chat box */
 .chat-box {
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
     background-color: #1e1e1e;
-    border: 1px solid #444444;
-    color: #e0e0e0;
+}
+
+.chat-box .mensagem:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.mensagem {
+    max-width: 60%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 0.9em;
+    word-wrap: break-word;
 }
 
 .mensagem.usuario {
-    background-color: #004d40;
-    color: #b2dfdb;
-    border: 1px solid #00796b;
+    background-color: #007bff;
+    color: white;
+    margin-left: auto;
+    margin-right: 0;
+    text-align: left;
 }
 
 .mensagem.outro {
-    background-color: #4a148c;
-    color: #e1bee7;
-    border: 1px solid #7b1fa2;
+    background-color: #f1f1f1;
+    color: #333;
+    margin-right: auto;
+    margin-left: 0;
+    text-align: left;
 }
 
 .mensagem strong {
-    color: #ffffff;
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
+
+.mensagem div {
+    font-size: 0.75em;
+    color: #bbb;
+    margin-top: 5px;
+    text-align: right;
+}
+
 
 /* Links */
 a {
