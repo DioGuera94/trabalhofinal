@@ -19,9 +19,13 @@ app.get('/menu', (req, res) => {
             <head>
                 <title>Menu</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    .container { margin-top: 50px; }
+                </style>
             </head>
             <body>
-                <div class="container mt-5">
+                <div class="container">
                     <h1>Menu</h1>
                     <a href="/cadastroUsuario.html" class="btn btn-primary">Cadastro de Usuários</a>
                     <a href="/batepapo" class="btn btn-secondary">Bate-papo</a>
@@ -37,9 +41,13 @@ app.get('/cadastroUsuario.html', (req, res) => {
             <head>
                 <title>Cadastro de Usuários</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    .container { margin-top: 50px; }
+                </style>
             </head>
             <body>
-                <div class="container mt-5">
+                <div class="container">
                     <h1>Cadastro de Usuários</h1>
                     <form action="/cadastrarUsuario" method="POST">
                         <div class="mb-3">
@@ -73,12 +81,22 @@ app.post('/cadastrarUsuario', (req, res) => {
 
     usuarios.push({ nome, dataNascimento, nickname });
     res.send(`
-        <h1>Usuários cadastrados</h1>
-        <ul>
-            ${usuarios.map(u => `<li>${u.nome} (${u.nickname})</li>`).join('')}
-        </ul>
-        <a href="/cadastroUsuario.html">Cadastrar novo usuário</a>
-        <a href="/menu">Voltar ao menu</a>
+        <html>
+            <head>
+                <title>Usuários Cadastrados</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-5">
+                    <h1>Usuários cadastrados</h1>
+                    <ul>
+                        ${usuarios.map(u => `<li>${u.nome} (${u.nickname})</li>`).join('')}
+                    </ul>
+                    <a href="/cadastroUsuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
+                    <a href="/menu" class="btn btn-secondary">Voltar ao menu</a>
+                </div>
+            </body>
+        </html>
     `);
 });
 
@@ -88,14 +106,46 @@ app.get('/batepapo', (req, res) => {
             <head>
                 <title>Bate-papo</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    .container { margin-top: 50px; }
+                    .mensagem {
+                        margin-bottom: 15px;
+                        padding: 10px;
+                        border: 1px solid #ddd;
+                        border-radius: 10px;
+                        max-width: 60%;
+                    }
+                    .mensagem.usuario {
+                        background-color: #f0f8ff;
+                        align-self: flex-start;
+                    }
+                    .mensagem.outro {
+                        background-color: #e6ffe6;
+                        align-self: flex-end;
+                    }
+                    .chat-box {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                    }
+                    .formulario {
+                        margin-top: 30px;
+                    }
+                </style>
             </head>
             <body>
-                <div class="container mt-5">
+                <div class="container">
                     <h1>Bate-papo</h1>
-                    <ul>
-                        ${mensagens.map(m => `<li>${m.dataHora} - <strong>${m.usuario}:</strong> ${m.texto}</li>`).join('')}
-                    </ul>
-                    <form action="/postarMensagem" method="POST">
+                    <div class="chat-box">
+                        ${mensagens.map(m => `
+                            <div class="mensagem ${m.usuario === "Você" ? "usuario" : "outro"}">
+                                <strong>${m.usuario}:</strong> ${m.texto}
+                                <div style="font-size: 0.8em; color: #555;">${m.dataHora}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <form action="/postarMensagem" method="POST" class="formulario">
                         <div class="mb-3">
                             <label for="usuario" class="form-label">Usuário</label>
                             <select id="usuario" name="usuario" class="form-select" required>
