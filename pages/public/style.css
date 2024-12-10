@@ -1,36 +1,70 @@
-.chat-box {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    background-color: #f9f9f9;
+/* Paleta escura para o modo noturno */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
 }
 
-.mensagem {
-    margin-bottom: 10px;
-    padding: 5px;
-    border-radius: 5px;
+/* Inputs e botões */
+input, select, textarea {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border: 1px solid #444444;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #66afe9;
+}
+
+button {
+    background-color: #007bff;
+    color: #e0e0e0;
+    border: none;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Chat box */
+.chat-box {
+    background-color: #1e1e1e;
+    border: 1px solid #444444;
+    color: #e0e0e0;
 }
 
 .mensagem.usuario {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
+    background-color: #004d40;
+    color: #b2dfdb;
+    border: 1px solid #00796b;
 }
 
 .mensagem.outro {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
+    background-color: #4a148c;
+    color: #e1bee7;
+    border: 1px solid #7b1fa2;
 }
 
 .mensagem strong {
-    font-weight: bold;
+    color: #ffffff;
 }
 
-.mensagem div {
-    font-size: 0.9em;
-    color: #6c757d;
+/* Links */
+a {
+    color: #66afe9;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Containers e campos */
+.container {
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    border: 1px solid #444444;
 }
