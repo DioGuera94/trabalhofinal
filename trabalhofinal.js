@@ -1,24 +1,7 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const fs = require('fs');
 const app = express();
-
-// Funções auxiliares para manipulação de JSON
-function lerJSON(arquivo) {
-    if (!fs.existsSync(arquivo)) {
-        return [];
-    }
-    return JSON.parse(fs.readFileSync(arquivo, 'utf-8'));
-}
-
-function salvarJSON(arquivo, dados) {
-    fs.writeFileSync(arquivo, JSON.stringify(dados, null, 2), 'utf-8');
-}
-
-// Carregar dados iniciais
-let usuarios = lerJSON('usuarios.json');
-let mensagens = lerJSON('mensagens.json');
 
 // Configuração de sessão
 app.use(session({
@@ -49,8 +32,8 @@ app.post('/login', (req, res) => {
     const { usuario, senha } = req.body;
     if (usuario === 'admin' && senha === '123') {
         req.session.usuario = usuario; // Salvar o usuário na sessão
-        req.session.usuarios = usuarios; // Carregar usuários na sessão
-        req.session.mensagens = mensagens; // Carregar mensagens na sessão
+        req.session.usuarios = []; // Inicializar lista de usuários na sessão
+        req.session.mensagens = []; // Inicializar lista de mensagens na sessão
         res.redirect('/menu');
     } else {
         res.send(`
@@ -152,8 +135,7 @@ app.post('/cadastrarusuario', (req, res) => {
     }
 
     const novoUsuario = { nome, dataNascimento, apelido };
-    usuarios.push(novoUsuario);
-    salvarJSON('usuarios.json', usuarios); // Salvar no arquivo
+    req.session.usuarios.push(novoUsuario); // Salvar na sessão
 
     res.send(`
         <html>
@@ -166,7 +148,7 @@ app.post('/cadastrarusuario', (req, res) => {
                 <div class="container mt-5">
                     <h1>Usuários Cadastrados</h1>
                     <ul>
-                        ${usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
+                        ${req.session.usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
                     </ul>
                     <a href="/cadastrousuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
                     <a href="/menu" class="btn btn-secondary">Voltar ao Menu</a>
@@ -193,7 +175,7 @@ app.get('/batepapo', (req, res) => {
                 <div class="container">
                     <h1>Bate-papo</h1>
                     <div class="chat-box">
-                        ${mensagens.map(m => `
+                        ${req.session.mensagens.map(m => `
                             <div class="mensagem ${m.usuario === req.session.usuario ? "usuario" : "outro"}">
                                 <strong>${m.usuario}:</strong> ${m.texto}
                                 <div>${m.dataHora}</div>
@@ -204,7 +186,7 @@ app.get('/batepapo', (req, res) => {
                         <div class="mb-3">
                             <label for="usuario" class="form-label">Usuário</label>
                             <select id="usuario" name="usuario" class="form-select" required>
-                                ${usuarios.map(u => `<option value="${u.apelido}">${u.apelido}</option>`).join('')}
+                                ${req.session.usuarios.map(u => `<option value="${u.apelido}">${u.apelido}</option>`).join('')}
                             </select>
                         </div>
                         <div class="mb-3">
@@ -231,8 +213,7 @@ app.post('/postarmensagem', (req, res) => {
         texto,
         dataHora: new Date().toLocaleString('pt-BR'),
     };
-    mensagens.push(mensagem);
-    salvarJSON('mensagens.json', mensagens); // Salvar no arquivo
+    req.session.mensagens.push(mensagem); // Salvar na sessão
     res.redirect('/batepapo');
 });
 
