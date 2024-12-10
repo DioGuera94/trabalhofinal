@@ -85,7 +85,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Cadastro de Usuários
+// Página para Cadastro de Usuários (GET)
 app.get('/cadastrousuario.html', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/login.html');
@@ -120,6 +120,42 @@ app.get('/cadastrousuario.html', (req, res) => {
         </html>
     `);
 });
+
+// Rota para cadastro de usuário (POST)
+app.post('/cadastrarusuario', (req, res) => {
+    if (!req.session.usuario) {
+        return res.redirect('/login.html');
+    }
+
+    const { nome, dataNascimento, apelido } = req.body;
+    if (!nome || !dataNascimento || !apelido) {
+        return res.send("Todos os campos são obrigatórios.");
+    }
+
+    // Armazenando o usuário na sessão
+    req.session.usuarios.push({ nome, dataNascimento, apelido });
+
+    // Exibindo a lista de usuários cadastrados
+    res.send(`
+        <html>
+            <head>
+                <title>Usuários Cadastrados</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            </head>
+            <body>
+                <div class="container mt-5">
+                    <h1>Usuários cadastrados</h1>
+                    <ul>
+                        ${req.session.usuarios.map(u => `<li>${u.nome} (${u.apelido})</li>`).join('')}
+                    </ul>
+                    <a href="/cadastrousuario.html" class="btn btn-primary">Cadastrar novo usuário</a>
+                    <a href="/menu" class="btn btn-secondary">Voltar ao menu</a>
+                </div>
+            </body>
+        </html>
+    `);
+});
+
 
 // Resto das rotas para o bate-papo, etc. com os dados da sessão
 app.get('/batepapo', (req, res) => {
