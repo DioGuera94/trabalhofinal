@@ -10,6 +10,7 @@ const host = '0.0.0.0';
 let usuarios = [];
 let mensagens = [];
 
+// Serve arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, 'trabalhofinal', 'pages', 'public')));
 
 app.get('/', (req, res) => {
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login.html', (req, res) => {
+    // Corrigido o caminho para o arquivo de login.html
     res.sendFile(path.join(__dirname, 'trabalhofinal', 'pages', 'public', 'login.html'));
 });
 
